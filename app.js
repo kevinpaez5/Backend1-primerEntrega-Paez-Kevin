@@ -1,6 +1,8 @@
 import express from "express";
 import ProductManager from "./productManager.js";
+import CartManager from "./cartManager.js";
 
+const cartManager = new CartManager("./carts.json");
 const app = express();
 app.use(express.json());
 const productManager = new ProductManager("./products.json");
@@ -67,11 +69,37 @@ app.get("/api/products/:pid", async (req, res) => {
 
 // /api/carts
 
-app.post("/api/carts", (req, res) => {});
+app.post("/api/carts", async(req, res) => {
+    try {
+        const newCart = await cartManager.createCart();
+        res.status(201).json({ message: "Carrito creado", cart: newCart });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
-app.get("/api/carts/:cid", (req, res) => {});
+app.get("/api/carts/:cid", async(req, res) => {
+    try {
+        const cid = req.params.cid;
+        const cart = await cartManager.getCartById(cid);
+        if (!cart) {
+            return res.status(404).json({ message: "Carrito no encontrado" });
+        }
+        res.status(200).json({ products: cart.products });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
-app.post("/api/carts/:cid/product/:pid", (req, res) => {});
+app.post("/api/carts/:cid/product/:pid", async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
+        const updatedCart = await cartManager.addProductToCart(cid, pid);
+        res.status(200).json({ message: "Producto agregado al carrito", cart: updatedCart });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 app.listen(8080, () => {
     console.log("Servidor escuchando en http://localhost:8080");
