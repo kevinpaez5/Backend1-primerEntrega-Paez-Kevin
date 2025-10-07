@@ -23,7 +23,7 @@ class ProductManager {
 
             //guardamos los productos en el json
             await fs.writeFile(this.pathFile, JSON.stringify(products, null, 2), "utf-8");
-            return products;
+            return product;
         } catch (error) {
             throw new Error("Error al agregar el producto" + error);
         }
