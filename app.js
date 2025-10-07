@@ -1,11 +1,11 @@
 import express from "express";
-import ProductManager from "./productManager.js";
-import CartManager from "./cartManager.js";
+import ProductManager from "./src/managers/productManager.js";
+import CartManager from "./src/managers/cartManager.js";
 
-const cartManager = new CartManager("./carts.json");
+const cartManager = new CartManager("./src/data/carts.json");
 const app = express();
 app.use(express.json());
-const productManager = new ProductManager("./products.json");
+const productManager = new ProductManager("./src/data/products.json");
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
