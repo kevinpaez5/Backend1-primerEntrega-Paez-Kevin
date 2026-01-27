@@ -1,7 +1,7 @@
 import passport from "passport";
 import local from "passport-local";
 import jwt from "passport-jwt";
-import { UserModel } from "../models/user.model.js";
+import usersService from "../services/users.service.js";
 import { isValidPassword } from "../utils/hash.js";
 
 const LocalStrategy = local.Strategy;
@@ -17,7 +17,7 @@ export const initializePassport = () => {
       { usernameField: "email" },
       async (email, password, done) => {
         try {
-          const user = await UserModel.findOne({ email });
+          const user = await usersService.getUserByEmail(email);
           if (!user) return done(null, false);
 
           if (!isValidPassword(user, password))
@@ -41,7 +41,8 @@ export const initializePassport = () => {
       },
       async (jwt_payload, done) => {
         try {
-          const user = await UserModel.findById(jwt_payload.id);
+          const user = await usersService.getUserById(jwt_payload.id);
+          if (!user) return done(null, false);
           return done(null, user);
         } catch (error) {
           return done(error);

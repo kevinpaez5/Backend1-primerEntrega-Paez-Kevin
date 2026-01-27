@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { generateToken } from "../utils/jwt.js";
+import UserDTO from "../dto/user.dto.js";
 
 const router = Router();
 
@@ -19,12 +20,11 @@ router.get(
   "/current",
   passport.authenticate("current", { session: false }),
   (req, res) => {
+    const userDTO = new UserDTO(req.user);
 
-    //ocultamos la contraseña
-    const { password, ...userWithoutPassword } = req.user._doc;
     res.json({
       status: "success",
-      user: userWithoutPassword
+      user: userDTO
     });
   }
 );

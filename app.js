@@ -1,13 +1,10 @@
+import "dotenv/config";
 import express from "express";
 import { engine } from "express-handlebars";
 import connectMongoDB from "./src/config/db.js";
-import dotenv from "dotenv";
 import __dirname from "./dirname.js";
 import passport from "passport";
 import { initializePassport } from "./src/config/passport.config.js";
-
-//Inicializamos las variables de entorno
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
@@ -23,6 +20,7 @@ import cartsRouter from "./src/routes/carts.router.js";
 import viewsRouter from "./src/routes/views.router.js";
 import usersRouter from "./src/routes/user.router.js";
 import sessionsRouter from "./src/routes/sessions.router.js";
+import passwordRouter from "./src/routes/password.router.js";
 
 //handlebars
 app.engine("handlebars", engine())
@@ -36,6 +34,8 @@ app.use("/api/products", productRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionsRouter);
+app.use("/api/password", passwordRouter);
+
 
 //Inicializamos passport
 initializePassport();

@@ -1,5 +1,7 @@
 import express from "express";
 import Product from "../models/product.model.js";
+import passport from "passport";
+import authorization from "../middlewares/authorization.middleware.js";
 
 const productRouter = express.Router();
 
@@ -32,46 +34,59 @@ productRouter.get("/:pid", async (req, res) => {
     }
 });
 
-// agregar producto
-productRouter.post("/", async (req, res) => {
+// crear un producto
+productRouter.post(
+  "/",
+  passport.authenticate("current", { session: false }),
+  authorization("admin"),
+  async (req, res) => {
     try {
-        const { title, description, price, code, stock, category } = req.body;
-        const product = await Product.create({ title, description, price, code, stock, category });
+      const { title, description, price, code, stock, category } = req.body;
+      const product = await Product.create({ title, description, price, code, stock, category });
 
-        res.status(201).json({ status: "success", payload: product });
+      res.status(201).json({ status: "success", payload: product });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-});
-
+  }
+);
 // actualizar producto
-productRouter.put("/:pid", async (req, res) => {
+productRouter.put(
+  "/:pid",
+  passport.authenticate("current", { session: false }),
+  authorization("admin"),
+  async (req, res) => {
     try {
-        const pid = req.params.pid;
-        const updates = req.body;
-        const products = await Product.findByIdAndUpdate(pid, updates, {new:true});
-        if(!products){
-            return res.status(404).json({ message: "Producto no encontrado" }); 
-        }
-        res.status(200).json({ status: "success", payload: products });
+      const pid = req.params.pid;
+      const updates = req.body;
+      const products = await Product.findByIdAndUpdate(pid, updates, { new: true });
+      if (!products) {
+        return res.status(404).json({ message: "Producto no encontrado" });
+      }
+      res.status(200).json({ status: "success", payload: products });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-});
-
+  }
+);
 
 // eliminar producto por id
-productRouter.delete("/:pid", async (req, res) => {
+productRouter.delete(
+  "/:pid",
+  passport.authenticate("current", { session: false }),
+  authorization("admin"),
+  async (req, res) => {
     try {
-        const pid = req.params.pid;
-        const deletedProduct = await Product.findByIdAndDelete(pid); 
-        if (!deletedProduct) {
+      const pid = req.params.pid;
+      const deletedProduct = await Product.findByIdAndDelete(pid);
+      if (!deletedProduct) {
         return res.status(404).json({ message: "Producto no encontrado" });
-    }
-        res.status(200).json({ status: "success", payload: deletedProduct });
+      }
+      res.status(200).json({ status: "success", payload: deletedProduct });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-});
+  }
+);
 
 export default productRouter;
