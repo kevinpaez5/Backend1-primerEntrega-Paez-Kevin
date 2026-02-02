@@ -5,6 +5,8 @@ import connectMongoDB from "./src/config/db.js";
 import __dirname from "./dirname.js";
 import passport from "passport";
 import { initializePassport } from "./src/config/passport.config.js";
+import mocksRouter from "./src/routes/mocks.router.js";
+import petsRouter from "./src/routes/pets.router.js";
 
 const app = express();
 const PORT = process.env.PORT;
@@ -35,6 +37,8 @@ app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/api/password", passwordRouter);
+app.use("/api/mocks", mocksRouter);
+app.use("/api/pets", petsRouter);
 
 
 //Inicializamos passport

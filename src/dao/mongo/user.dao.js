@@ -7,4 +7,5 @@ export default class UsersDAO {
   create = (user) => UserModel.create(user);
   update = (id, data) => UserModel.findByIdAndUpdate(id, data, { new: true });
   delete = (id) => UserModel.findByIdAndDelete(id);
+  insertMany = (users) => UserModel.insertMany(users);
 }

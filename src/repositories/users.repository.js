@@ -27,4 +27,8 @@ export default class UsersRepository {
   deleteUser(id) {
     return this.dao.delete(id);
   }
+
+  insertMany(users) {
+    return this.dao.insertMany(users);
+  }
 }
