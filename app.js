@@ -7,6 +7,13 @@ import passport from "passport";
 import { initializePassport } from "./src/config/passport.config.js";
 import mocksRouter from "./src/routes/mocks.router.js";
 import petsRouter from "./src/routes/pets.router.js";
+import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpecs } from "./src/config/swagger.js";
+import { logger } from "./src/utils/logger.js";
+import { addLogger } from "./src/middlewares/logger.middleware.js";
+import adoptionRouter from "./src/routes/adoption.router.js";
+
 
 const app = express();
 const PORT = process.env.PORT;
@@ -14,6 +21,12 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(express.static("public"));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
+app.use(cors({
+  origin: "*",
+  methods: ["GET","POST","PUT","DELETE"]
+}));
 
 
 //Routes
@@ -40,6 +53,11 @@ app.use("/api/password", passwordRouter);
 app.use("/api/mocks", mocksRouter);
 app.use("/api/pets", petsRouter);
 
+app.use("/api/adoptions", adoptionRouter);
+
+
+
+app.use(addLogger);
 
 //Inicializamos passport
 initializePassport();
@@ -49,6 +67,6 @@ app.use(passport.initialize());
 connectMongoDB();
 
 app.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  logger.info(`Servidor escuchando en http://localhost:${PORT}`);
 });
 
